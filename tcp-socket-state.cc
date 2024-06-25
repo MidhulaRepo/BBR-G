@@ -119,18 +119,18 @@ TcpSocketState::TcpSocketState(const TcpSocketState& other)
       m_paceInitialWindow(other.m_paceInitialWindow),
       m_minRtt(other.m_minRtt),
       m_rttFactor(other.m_rttFactor),
-      m_currRtt(other.m_currRtt),  //midhula
-      m_prevRtt(other.m_prevRtt),  //midhu
-      m_avgRtt(other.m_avgRtt),  //midhula
-      m_countPacket(other.m_countPacket),  //midhula
-      m_sumRtt(other.m_sumRtt),  //midhu
-      m_rttrate(other.m_rttrate), //midhu
-      m_sum(other.m_sum),  //midhu
-      m_result(other.m_result), //midhu
-      m_send_pnum(other.m_send_pnum), //midhu
-      m_recv_pnum(other.m_recv_pnum), //midhu
-      m_Inflight_count(other.m_Inflight_count), //midhu
-      m_previousloss_pnum(other.m_previousloss_pnum), //midhu
+      m_currRtt(other.m_currRtt),  
+      m_prevRtt(other.m_prevRtt), 
+      m_avgRtt(other.m_avgRtt), 
+      m_countPacket(other.m_countPacket),  
+      m_sumRtt(other.m_sumRtt), 
+      m_rttrate(other.m_rttrate), 
+      m_sum(other.m_sum),  
+      m_result(other.m_result), 
+      m_send_pnum(other.m_send_pnum), 
+      m_recv_pnum(other.m_recv_pnum), 
+      m_Inflight_count(other.m_Inflight_count),
+      m_previousloss_pnum(other.m_previousloss_pnum), 
       m_bytesInFlight(other.m_bytesInFlight),
       m_lastRtt(other.m_lastRtt),
       m_ecnMode(other.m_ecnMode),
