@@ -203,21 +203,20 @@ class TcpSocketState : public Object
     uint16_t m_pacingSsRatio{0};           //!< SS pacing ratio
     uint16_t m_pacingCaRatio{0};           //!< CA pacing ratio
     bool m_paceInitialWindow{false};       //!< Enable/Disable pacing for the initial window
-    bool x{false}; //for mode x
-    bool y{false}; // for mode y
-    bool febbr{false}; // for mode febbr
-    bool is_rtt_fairness{true}; // midhula added
-    uint16_t m_overCount{0}; //midhula added
-  // /  uint32_t isRetransmissionCount{0}; //Midhula Added
+    bool x{false};
+    bool y{false}; 
+    bool febbr{false}; 
+    bool is_rtt_fairness{true}; 
+    uint16_t m_overCount{0}; 
+ 
 
 
-    Time m_minRtt{Time::Max()}; //!< Minimum RTT observed throughout the connection
-    Time m_currRtt{Seconds(0.0)};   //midhula
-    Time m_prevRtt{Seconds(0.0)};   //midhula
-    double m_avgRtt{(0.0)};    //midhula
-    double m_sumRtt{(0.0)};   //midhu
-    uint64_t m_countPacket{0};  //midhu
-    uint32_t qsize{0}; //Midhula; already the variable was in mohit example. I am making it as member variable
+    Time m_minRtt{Time::Max()}; 
+    Time m_currRtt{Seconds(0.0)};   
+    Time m_prevRtt{Seconds(0.0)};  
+    double m_avgRtt{(0.0)};    
+    double m_sumRtt{(0.0)};  
+    uint32_t qsize{0}; 
     double m_rttFactor{(0.0)};
     double max_rttf{(0.0)};
     double min_rttf{(0.0)};
@@ -235,7 +234,7 @@ class TcpSocketState : public Object
     double m_losspratio{(0.0)};
     uint32_t m_Inflight_count{0};
     double gain_C{(0.0)};
-    DataRate m_previousRate{0};      //For storing the previous data rate  by midhu
+    DataRate m_previousRate{0};     
     
     TracedValue<uint32_t> m_bytesInFlight{0};  //!< Bytes in flight
     TracedValue<Time> m_lastRtt{Seconds(0.0)}; //!< Last RTT sample collected
