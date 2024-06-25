@@ -221,29 +221,21 @@ void
 TcpBbr::SetPacingRate(Ptr<TcpSocketState> tcb, double gain)
 {
     NS_LOG_FUNCTION(this << tcb << gain);
-    std::ofstream outputFile("Gain_Setpacing.txt", std::ios_base::app);
-    std::ofstream outputFile100("SetDataRate.dat", std::ios_base::app);
     double gain_C;
-
-
     tcb->x = true;
     if (tcb->x)
     {
         if (tcb->m_prevRtt < m_rtProp)
         {
-            gain_C =   tcb->m_rttFactor; //* 0.5 ;  //0.5   //ckeck  gain_C =   0.5 *tcb->m_rttFactor; 
+            gain_C =   tcb->m_rttFactor; 
         }
         else
         {
-            gain_C =   tcb->m_rttFactor;  //1
+            gain_C =   tcb->m_rttFactor; 
         }
     }
     else
         gain_C = gain;
-
-   // std::cout<<"BBR P_G = "<<gain<<std::endl;
-   // std::cout<<"BBR-G = "<<gain_C<<std::endl;  getchar();
-
 
     //Check if the file opened correctly
     if (outputFile.is_open())
@@ -255,24 +247,21 @@ TcpBbr::SetPacingRate(Ptr<TcpSocketState> tcb, double gain)
     {
         std::cerr<<"Unable to write"<<std::endl;
     }
-    DataRate rate(0.41*gain_C *m_maxBwFilter.GetBest().GetBitRate());  //0.4
-    rate = std::min(rate, tcb->m_maxPacingRate);  // converted min to max by me
+    DataRate rate(0.41*gain_C *m_maxBwFilter.GetBest().GetBitRate()); 
+    rate = std::min(rate, tcb->m_maxPacingRate);  
 
     double C = 0.41*gain_C;
-    
-
-   // std::cout<<"Max pacing...."<<tcb->m_maxPacingRate<<std::endl; getchar();  //midhula
 
     if (!m_hasSeenRtt && tcb->m_minRtt != Time::Max())
     {
         InitPacingRate(tcb);
     }
 
-    if (m_isPipeFilled || rate > tcb->m_pacingRate)  //commented by me 
+    if (m_isPipeFilled || rate > tcb->m_pacingRate)  
     {
         tcb->m_pacingRate = rate;
     }
-    //std::cout<<"Sending Data rate is = "<< tcb->m_pacingRate<<std::endl; //getchar(); //midhula 
+
     //Check if the file opened correctly
     if (outputFile100.is_open())
     {
@@ -294,7 +283,7 @@ TcpBbr::InFlight(Ptr<TcpSocketState> tcb, double gain)
     {
         return tcb->m_initialCWnd * tcb->m_segmentSize;
     }
-    double quanta = 3 * m_sendQuantum; // changed to 4 is by me from 3
+    double quanta = 3 * m_sendQuantum; 
     double estimatedBdp = m_maxBwFilter.GetBest() * m_rtProp / 8.0;
     double cwnd_C;
     tcb->x = true;
@@ -302,32 +291,21 @@ TcpBbr::InFlight(Ptr<TcpSocketState> tcb, double gain)
     {
         if (tcb->m_prevRtt < m_rtProp)
         {
-            cwnd_C =  tcb->m_rttFactor;  //previously 2 then 1.5 with 1.1  noow....0.5
+            cwnd_C =  tcb->m_rttFactor;  
         }
         else
         {
-            cwnd_C =  tcb->m_rttFactor;  //previously 2
+            cwnd_C =  tcb->m_rttFactor; 
         }
     }
     else
         cwnd_C = gain;
     //Check if the file opened correctly
-    if (outputFile1.is_open())
-    {
-        //outputFile1<<Simulator::Now ().GetSeconds () << " " <<m_cWndGain<< " " <<cwnd_C<<" "<<estimatedBdp<<std::endl;
-        outputFile1<<Simulator::Now ().GetSeconds () << " " <<m_maxBwFilter.GetBest()<< " " <<m_rtProp / 8.0<<" "<<estimatedBdp<<std::endl;
-        outputFile1.close();
-    }
-    else
-    {
-        std::cerr<<"Unable to write"<<std::endl;
-    }
-
     if (m_state == BbrMode_t::BBR_PROBE_BW && m_cycleIndex == 0)
     {
-        return (0.3*cwnd_C * estimatedBdp) + quanta + (2 * tcb->m_segmentSize); //0.3  //Original verison contain multiplication by 2. I am testing without 2.
+        return (0.3*cwnd_C * estimatedBdp) + quanta + (2 * tcb->m_segmentSize);
     }
-    return (0.5*cwnd_C * estimatedBdp) + quanta; //0.5
+    return (0.5*cwnd_C * estimatedBdp) + quanta; 
 }
 
 
