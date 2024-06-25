@@ -376,9 +376,7 @@ class TcpSocketBase : public TcpSocket
      * \brief Callback pointer for RTT trace chaining
      */
     TracedCallback<Time, Time> m_lastRttTrace;   
-   // TracedCallback<Time, Time> m_currentRttTrace;   //midhula
-   // TracedCallback<Time, Time> m_previousRttTrace;  //midhula
-    //TracedCallback<Time, Time> m_avgRttTrace;     //midhula
+   
     
 
 
