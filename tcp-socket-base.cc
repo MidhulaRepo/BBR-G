@@ -3859,53 +3859,7 @@ TcpSocketBase::EstimateRtt(const TcpHeader& tcpHeader)
         // RFC 6298, clause 2.4
     m_rto = Max(m_rtt->GetEstimate() + Max(m_clockGranularity, m_rtt->GetVariation() * 4), m_minRto);
     m_tcb->m_lastRtt = m_rtt->GetEstimate();      // ...............................
-    m_tcb->m_minRtt = std::min(m_tcb->m_lastRtt.Get(), m_tcb->m_minRtt);   ///m_last Rtt and m_min Rtt found.
-    m_tcb->m_prevRtt= m_tcb->m_currRtt;  
-    m_tcb->m_currRtt = m;  
-     
-    double ct = (double) m_tcb->m_currRtt.GetSeconds();
-    m_tcb->m_sumRtt = m_tcb->m_sumRtt + ct; 
-    m_tcb->m_avgRtt = m_tcb->m_sumRtt/m_tcb->m_countPacket; 
-    double xn = (double) m_tcb->m_currRtt.GetSeconds();
-    double xd = (double) m_tcb->m_minRtt.GetSeconds();
-    double m_xFactor= xn/xd;//(double)( m_tcb->m_currRtt.GetSeconds() /  m_tcb->m_minRtt.GetSeconds()) ;
-    double Xn = (double) (m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_prevRtt.GetSeconds());
-    double Xd = (double) (m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_avgRtt);
-    double num = Xn;
-    double denom = m_xFactor*Xd;
-    double rttf, scaled_rttf;
     
-    if (denom == 0|| num == 0 || m_xFactor == 0 || m_tcb->m_prevRtt.GetSeconds() == 0)
-    {
-        std::cout<<"Invalid"<<std::endl;
-        scaled_rttf = 2.89;
-    }    
-    else
-    {
-        m_xFactor = xn/xd;
-        rttf = Xn/(m_xFactor*Xd);
-        if (rttf>m_tcb->max_rttf)
-        {
-            m_tcb->max_rttf = rttf;
-        }
-        if (rttf<m_tcb->min_rttf)
-        {
-            m_tcb->min_rttf = rttf;
-        }
-        scaled_rttf = min_G+(max_G-min_G)*(rttf- m_tcb->min_rttf)/(m_tcb->max_rttf-m_tcb->min_rttf);
-    }
-    m_tcb->m_rttFactor = scaled_rttf;
-     //Check if the file opened correctly
-    if (outputFile.is_open())
-    {
-        outputFile<<Simulator::Now ().GetSeconds () << " " <<m_tcb->m_rttFactor<<" "<<m_tcb->min_rttf<<" "<<m_tcb->max_rttf<<" "<<m_tcb->m_currRtt<<" "<<m_tcb->m_prevRtt<<std::endl;
-        outputFile.close();
-    }
-    else
-    {
-        std::cerr<<"Unable to write"<<std::endl;
-    }
-    m_tcb->m_countPacket++;
     NS_LOG_INFO(this << m_tcb->m_lastRtt << m_tcb->m_minRtt);
     }
     
