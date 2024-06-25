@@ -3807,35 +3807,13 @@ TcpSocketBase::ReceivedData(Ptr<Packet> p, const TcpHeader& tcpHeader)
     SequenceNumber32 nextAckNumber = m_tcb->m_rxBuffer->NextRxSequence();
     // The acknowledgment number to be sent back would acknowledge all data up to nextExpectedSeq.
     // Therefore, the next expected sequence number is effectively the acknowledgment number you would send back.
-   // std::cout << "Acknowledgment number for the last successful reception: " << nextAckNumber << std::endl;// getchar();
-
-   // std::cout<<"..(tcp-socket-base.cc)...//..ReceivedData()..."<<std::endl;
 }
 
 void
 TcpSocketBase::EstimateRtt(const TcpHeader& tcpHeader)
 {
-    std::ofstream outputFile("rttFactor.txt", std::ios_base::app);
-
-    std::cout<<"..(tcp-socket-base.cc).....EstimateRtt().Starts here........"<<std::endl; //getchar();
-
-  //  uint32_t m_Inflight_count =  m_tcb->m_highTxMark.Get() - m_highRxAckMark.Get();
- //   std::cout<<"Inflight Count = "<<m_tcb->m_Inflight_count<<std::endl; //getchar();
     SequenceNumber32 ackSeq = tcpHeader.GetAckNumber();  //Retrieves the acknowledgment number from the TCP header and stores it in ackSeq
-    Time m = Time(0.0); 
-
-    //std::cout<<"ackSeq"<<ackSeq<<std::endl;
-    //std::cout<<"Last Seq "<<lastSeqNum<<std::endl;
-   // std::cout<<"nextAckNumber "<<nextAckNumber<<std::endl;
-    //getchar();
-
-    // m_tcb->m_previousloss_pnum = m_tcb->m_currentloss_pnum;
-    // m_tcb->m_currentloss_pnum = m_tcb->m_send_pnum - m_tcb->m_recv_pnum - m_Inflight_count;
-
-    // m_tcb->m_losspratio = (double) m_tcb->m_currentloss_pnum + m_tcb->m_previousloss_pnum;
-
-    // std::cout<<"LosspRatio will be "<<m_tcb->m_losspratio<<std::endl;getchar();
-    
+    Time m = Time(0.0);    
     std::cout<<"..tcpsocket base.cc An ack has been received, calculate rtt and log this measurement"<<std::endl;// //getchar(); //..................
     // An ack has been received, calculate rtt and log this measurement
     // Note we use a linear search (O(n)) for this since for the common
@@ -3882,66 +3860,30 @@ TcpSocketBase::EstimateRtt(const TcpHeader& tcpHeader)
     m_rto = Max(m_rtt->GetEstimate() + Max(m_clockGranularity, m_rtt->GetVariation() * 4), m_minRto);
     m_tcb->m_lastRtt = m_rtt->GetEstimate();      // ...............................
     m_tcb->m_minRtt = std::min(m_tcb->m_lastRtt.Get(), m_tcb->m_minRtt);   ///m_last Rtt and m_min Rtt found.
-    
-   // m_tcb ->m_prevRtt = m_tcb->m_currRtt;
-   // m_tcb->m_currRtt = m;
-
-  //  double m_rttrate = (double) ((m_tcb->m_currRtt.GetSeconds() - m_tcb->m_prevRtt.GetSeconds()) / m_tcb->m_avgRtt);
-  //  double m_sum = m_rttrate + m_tcb->m_losspratio;
-    //double m_result = 0.75 + (2.89 - exp(m_sum));
-  //  double m_result = 4 - exp(m_sum);
-    // double m_result = 10 - exp(-(m_sum));
-  //   m_result = abs(m_result);
-    // std::cout<<"The final result value will be "<<m_result<<"sum is "<<m_sum<<std::endl;getchar();
-
-    // if( m_tcb->m_countPacket > uint64_t(1))
-    // {
-    //  // std::cout<<"Haii Midhula from prevRtt loop..."<<std::endl;  //getchar();
-    //       m_tcb->m_prevRtt= m_tcb->m_currRtt;  //midhu
-    // }
+    m_tcb->m_prevRtt= m_tcb->m_currRtt;  
+    m_tcb->m_currRtt = m;  
      
-    // std::cout<<"\n Estimated Packet Count ="<< m_tcb->m_countPacket<<std::endl; //getchar();
-     m_tcb->m_prevRtt= m_tcb->m_currRtt;  //midhu
-     m_tcb->m_currRtt = m;  //midhula
-     
-     double ct = (double) m_tcb->m_currRtt.GetSeconds();
-     m_tcb->m_sumRtt = m_tcb->m_sumRtt + ct; //midhu
-     m_tcb->m_avgRtt = m_tcb->m_sumRtt/m_tcb->m_countPacket; 
-    
-
-    // std::cout<<"Sum RTT ="<< m_tcb->m_sumRtt<<std::endl;
-    // std::cout<<"Minimum RTT ="<< m_tcb->m_minRtt<<std::endl;
-    // std::cout<<"Average RTT ="<<m_tcb->m_avgRtt<<std::endl; ////getchar();
-    double min_G = 0.75;
-    double max_G = 2.89;
-
+    double ct = (double) m_tcb->m_currRtt.GetSeconds();
+    m_tcb->m_sumRtt = m_tcb->m_sumRtt + ct; 
+    m_tcb->m_avgRtt = m_tcb->m_sumRtt/m_tcb->m_countPacket; 
     double xn = (double) m_tcb->m_currRtt.GetSeconds();
     double xd = (double) m_tcb->m_minRtt.GetSeconds();
     double m_xFactor= xn/xd;//(double)( m_tcb->m_currRtt.GetSeconds() /  m_tcb->m_minRtt.GetSeconds()) ;
     double Xn = (double) (m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_prevRtt.GetSeconds());
     double Xd = (double) (m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_avgRtt);
-    //m_tcb->m_rttFactor = Xn/(m_xFactor*Xd);
-     //m_tcb->m_rttFactor = (double) (( m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_prevRtt.GetSeconds()) / (m_xFactor * ( m_tcb->m_currRtt.GetSeconds() -  m_tcb->m_avgRtt)));
-    //m_tcb->m_rttFactor = abs(m_tcb->m_rttFactor);
-
     double num = Xn;
     double denom = m_xFactor*Xd;
-    double rttf, scaled_rttf;// = num / denom;
+    double rttf, scaled_rttf;
     
-    //double max_rttf = 0, min_rttf = 0;
     if (denom == 0|| num == 0 || m_xFactor == 0 || m_tcb->m_prevRtt.GetSeconds() == 0)
     {
         std::cout<<"Invalid"<<std::endl;
         scaled_rttf = 2.89;
-        //std::cout<<"Denom or num = 0"<<" "<<"GainC ="<<scaled_rttf<<std::endl; 
-        std::cout<<"Current RTT ="<< m_tcb->m_currRtt<<std::endl;
-        std::cout<<"previous RTT ="<< m_tcb->m_prevRtt<<std::endl; //getchar();  //current  and previous changes.getchar();
     }    
     else
     {
         m_xFactor = xn/xd;
         rttf = Xn/(m_xFactor*Xd);
-        //std::cout<<rttf<<std::endl; getchar();
         if (rttf>m_tcb->max_rttf)
         {
             m_tcb->max_rttf = rttf;
@@ -3951,15 +3893,8 @@ TcpSocketBase::EstimateRtt(const TcpHeader& tcpHeader)
             m_tcb->min_rttf = rttf;
         }
         scaled_rttf = min_G+(max_G-min_G)*(rttf- m_tcb->min_rttf)/(m_tcb->max_rttf-m_tcb->min_rttf);
-        //rttf = std::max(1.7, std::min(rttf, 2.89));
-        // rttf = std::min(2.89, rttf * (1 + 1));  ///just for time passing I am checking...u can dlete and continue.
-        //std::cout<<"RTT variation ="<<num<<" "<<scaled_rttf<<std::endl;getchar();
     }
     m_tcb->m_rttFactor = scaled_rttf;
-
-    
-    // std::cout<<"..(tcp-socket-base.cc)....//.EstimateRtt()........."<<std::endl; ////getchar(); 
-    
      //Check if the file opened correctly
     if (outputFile.is_open())
     {
@@ -3975,7 +3910,6 @@ TcpSocketBase::EstimateRtt(const TcpHeader& tcpHeader)
     }
     
 }
-
 
 // Called by the ReceivedAck() when new ACK received and by ProcessSynRcvd()
 // when the three-way handshake completed. This cancels retransmission timer
